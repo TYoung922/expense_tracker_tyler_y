@@ -20,7 +20,11 @@ function ExpensesOverview() {
       screenOptions={({ navigation }) => ({
         headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
         headerTintColor: GlobalStyles.colors.primary50,
-        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        tabBarStyle: {
+          backgroundColor: GlobalStyles.colors.primary500,
+          paddingTop: 5,
+          height: 60,
+        },
         tabBarActiveTintColor: GlobalStyles.colors.accent500,
         tabBarInactiveTintColor: GlobalStyles.colors.primary50,
         headerRight: ({ tintColor }) => (
