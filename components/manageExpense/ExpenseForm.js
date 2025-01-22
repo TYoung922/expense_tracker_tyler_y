@@ -1,9 +1,10 @@
-import { StyleSheet, View, Text, Alert } from "react-native";
+import { StyleSheet, View, Text, Switch } from "react-native";
 import Input from "./Input";
 import { GlobalStyles } from "../../constants/styles";
 import { useState } from "react";
 import Button from "../UI/Button";
 import { getFormattedDate } from "../../util/date";
+// import Switch from "../UI/Switch";
 
 function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
   const [inputs, setInputs] = useState({
@@ -23,6 +24,10 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
       //   isValid: !!defaultValues,
       isValid: true,
     },
+    isIncome: {
+      value: defaultValues ? defaultValues.isIncome : false, // default to expense
+      isValid: true,
+    },
   });
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -39,6 +44,7 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
       amount: +inputs.amount.value,
       date: new Date(inputs.date.value),
       description: inputs.description.value,
+      isIncome: inputs.isIncome.value,
     };
 
     const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
@@ -69,6 +75,19 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
     !inputs.date.isValid ||
     !inputs.description.isValid;
 
+  const [isEnabled, setIsEnabled] = useState(inputs.isIncome.value);
+  // const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => {
+      const newValue = !previousState;
+      setInputs((curInputs) => ({
+        ...curInputs,
+        isIncome: { value: newValue, isValid: true },
+      }));
+      return newValue;
+    });
+  };
+
   return (
     <View style={styles.form}>
       <Text style={styles.titel}>Your Expense</Text>
@@ -94,6 +113,23 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
             value: inputs.date.value,
           }}
         />
+      </View>
+      <Text style={styles.switchText}>Income or Expense</Text>
+      <View style={styles.switchContainer}>
+        <Switch
+          trackColor={{
+            false: "#767577",
+            true: GlobalStyles.colors.primary200,
+          }}
+          thumbColor={isEnabled ? GlobalStyles.colors.accent500 : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
+        {!isEnabled && (
+          <Text style={styles.switchText}>This is an expense.</Text>
+        )}
+        {isEnabled && <Text style={styles.switchText}>This is income.</Text>}
       </View>
       <Input
         label="Description"
@@ -154,5 +190,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: GlobalStyles.colors.error500,
     margin: 8,
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  switchText: {
+    color: GlobalStyles.colors.primary100,
+    paddingLeft: 10,
   },
 });

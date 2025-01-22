@@ -3,7 +3,15 @@ import { GlobalStyles } from "../../constants/styles";
 
 function ExpensesSummary({ expenses, periodName }) {
   const expensesSum = expenses.reduce((sum, expense) => {
-    return sum + expense.amount;
+    let amount = 0;
+
+    if (expense.isIncome) {
+      amount = expense.amount;
+    } else {
+      amount = 0 - expense.amount;
+    }
+
+    return sum + amount;
   }, 0);
 
   return (
